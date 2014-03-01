@@ -55,7 +55,12 @@ send.mail(from = "sender@gmail.com",
           file.descriptions = c("Description for download log", "Description for upload log"))
 ```
 
-Contibutions/Issues
+MS Exchange server
+==================
+I do not have access to an exchange server, so I cannot test mailR against it. Would be great to get a short note if you could successfully use mailR via MS Exchange. Thanks! 
+
+
+Issues/Contibutions
 ===================
 Happy to hear about any issues you encounter using mailR. Simply file a ticket on github or feel free to <A HREF="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%72%2E%70%72%65%6D%72%61%6A%2B%6D%61%69%6C%52%40%67%6D%61%69%6C%2E%63%6F%6D">email me</A>, or even send in a patch ;-)
 
