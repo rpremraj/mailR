@@ -13,6 +13,18 @@ Sample use cases
 
 3. Keep your entire team on the same page by being able to deliver mails to multiple recipients.
 
+Installation instructions
+=========================
+You can install mailR using the devtools:
+
+```R
+install.packages("devtools", dep = T)
+library(devtools)
+install_github("mailR", "rpremraj")
+
+lbrary(mailR)
+```
+
 Usage
 =====
 To send an email via a SMTP server that does not require authentication:
