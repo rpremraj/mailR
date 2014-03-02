@@ -11,7 +11,7 @@ Sample use cases
 
 2. Periodically send updates on the status of long-running R processes. This is especially helpful when process running on remote machines encounter an error.
 
-3. Keep your entire team on the same page by being able to deliver mails to multiple recipients.
+3. Keep your entire team on the same page on the progress of the R process by being able to deliver mails to multiple recipients.
 
 Installation instructions
 =========================
