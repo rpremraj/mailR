@@ -77,3 +77,5 @@ Issues/Contibutions
 Happy to hear about any issues you encounter using mailR. Simply file a ticket on github or feel free to <A HREF="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%72%2E%70%72%65%6D%72%61%6A%2B%6D%61%69%6C%52%40%67%6D%61%69%6C%2E%63%6F%6D">email me</A>, or even send in a patch ;-)
 
 Also, would be great to have collaborators to further extend the functionality of mailR.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1650fb9891b70b7440cc380824b513f0 "githalytics.com")](http://githalytics.com/rpremraj/mailR)
