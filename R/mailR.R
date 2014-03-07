@@ -7,7 +7,7 @@
 createEmailAttachments <- function(attach.files, dots = NULL)
 {
   if(is.null(attach.files) | !all(sapply(c(attach.files), file.exists)))
-    stop("Argument 'file.name' must link to valid files")
+    stop("Argument 'attach.files' must link to valid files")
   
   file.names <- NULL
   file.descriptions <- NULL
@@ -70,14 +70,19 @@ authenticateSMTP <- function(smtp)
 #' 
 #' Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
 #' @export send.mail
+#' @import rJava
+#' @note For more examples, see https://github.com/rpremraj/mailR 
 #' @examples
-#' send.mail(from = "sender@@gmail.com",
-#'           to = c("recipient1@@gmail.com", "recipient2@@gmail.com"),
-#'           subject="Subject of the email",
-#'           body = "Body of the email",
-#'           smtp = list(host.name = "aspmx.l.google.com", port = 25),
-#'           authenticate = FALSE,
-#'           send = TRUE)
+#' sender <- "sender@@gmail.com"  # Replace with a valid address
+#' recipients <- c("receiver1@@gmail.com")  # Replace with one or more valid addresses
+#' email <- send.mail(from = sender,
+#'                    to = recipients,
+#'                    subject="Subject of the email",
+#'                    body = "Body of the email",
+#'                    smtp = list(host.name = "aspmx.l.google.com", port = 25),
+#'                    authenticate = FALSE,
+#'                    send = FALSE)
+#' \dontrun{email$send() # execute to send email}
 send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
 {
   if (length(from) != 1) 
