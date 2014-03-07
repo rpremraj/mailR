@@ -25,6 +25,14 @@ install_github("mailR", "rpremraj")
 lbrary(mailR)
 ```
 
+mailR can also available from [CRAN](http://cran.r-project.org/web/packages/mailR/):
+
+```R
+install.packages("mailR", dep = T)
+
+library(mailR)
+```
+
 Usage
 =====
 To send an email via a SMTP server that does not require authentication:
