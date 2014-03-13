@@ -116,7 +116,7 @@ send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenti
       email$setSSLOnConnect(TRUE)
   
   if("tls" %in% names(smtp))
-    if(smtp$ssl)
+    if(smtp$tls)
       email$setStartTLSEnabled(TRUE)
   
   email$setFrom(from)
