@@ -83,10 +83,14 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
+  .valid.email(from)
+  
+  if (!length(to) > 0) 
+    stop("Argument 'to' must have at least one single (valid) email address.")
   .valid.email(from)
   
   if(!all(c("host.name") %in% names(smtp)))
@@ -94,15 +98,19 @@ send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenti
   
   dots <- list(...)
   
-  if(!is.null(attach.files))
-  {
+  if(html)
+    email <- .jnew("org.apache.commons.mail.HtmlEmail")
+  else if(!is.null(attach.files))
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
-    attachments <- .createEmailAttachments(attach.files, dots)
-    sapply(attachments, email$attach)
-  }
   else
     email <- .jnew("org.apache.commons.mail.SimpleEmail")
   
+  if(!is.null(attach.files))
+  {
+    attachments <- .createEmailAttachments(attach.files, dots)
+    sapply(attachments, email$attach)
+  }
+
   email$setHostName(smtp$host.name)
   if("port" %in% names(smtp))
     email$setSmtpPort(as.integer(smtp$port));
@@ -121,13 +129,20 @@ send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenti
   
   email$setFrom(from)
   email$setSubject(subject)
-  email$setMsg(body)
   
-  if(length(to) > 0)
+  if(html)
   {
-    if(.valid.email(to))
-      sapply(to, email$addTo)
+    if(file.exists(body))
+      body <- readChar(body, file.info(body)$size)
+    
+    email$setHtmlMsg(as.character(body))
+    email$setTextMsg("Your email client does not support HTML messages")
   }
+  else
+    email$setMsg(as.character(body))
+  
+  if(.valid.email(to))
+    sapply(to, email$addTo)
   
   if("cc" %in% names(dots))
   {
