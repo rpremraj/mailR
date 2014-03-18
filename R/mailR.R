@@ -4,7 +4,7 @@
 #' @param dots A list generated from the ellipsis parameters in send.mail. See details for more info.
 #' @return attachments A vector of Java objects of class org.apache.commons.mail.EmailAttachment
 #' @details The relevant optional parameters include 'file.names' listing names to assign to the attached files and 'file.descriptions' that are descriptions to be assigned to the files. If included, both paramters should be of the same length as 
-createEmailAttachments <- function(attach.files, dots = NULL)
+.createEmailAttachments <- function(attach.files, dots = NULL)
 {
   if(is.null(attach.files) | !all(sapply(c(attach.files), file.exists)))
     stop("Argument 'attach.files' must link to valid files")
@@ -44,7 +44,7 @@ createEmailAttachments <- function(attach.files, dots = NULL)
 #'
 #' @param smtp A list of parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @return smtp.authentication A Java object of class 'org.apache.commons.mail.DefaultAuthenticator'
-authenticateSMTP <- function(smtp)
+.authenticateSMTP <- function(smtp)
 {
   if(!all(c("user.name", "passwd") %in% names(smtp)))
     stop("Username and password required for SMTP authentication.")
@@ -83,32 +83,40 @@ authenticateSMTP <- function(smtp)
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
-  valid.email(from)
+  .valid.email(from)
+  
+  if (!length(to) > 0) 
+    stop("Argument 'to' must have at least one single (valid) email address.")
+  .valid.email(from)
   
   if(!all(c("host.name") %in% names(smtp)))
     stop("Check documentation to include all mandatory parameters to establisg SMTP connection.")
   
   dots <- list(...)
   
-  if(!is.null(attach.files))
-  {
+  if(html)
+    email <- .jnew("org.apache.commons.mail.HtmlEmail")
+  else if(!is.null(attach.files))
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
-    attachments <- createEmailAttachments(attach.files, dots)
-    sapply(attachments, email$attach)
-  }
   else
     email <- .jnew("org.apache.commons.mail.SimpleEmail")
   
+  if(!is.null(attach.files))
+  {
+    attachments <- .createEmailAttachments(attach.files, dots)
+    sapply(attachments, email$attach)
+  }
+
   email$setHostName(smtp$host.name)
   if("port" %in% names(smtp))
     email$setSmtpPort(as.integer(smtp$port));
   
   if(authenticate == TRUE)
-    email$setAuthenticator(authenticateSMTP(smtp));
+    email$setAuthenticator(.authenticateSMTP(smtp));
   
   
   if("ssl" %in% names(smtp))
@@ -121,29 +129,36 @@ send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenti
   
   email$setFrom(from)
   email$setSubject(subject)
-  email$setMsg(body)
   
-  if(length(to) > 0)
+  if(html)
   {
-    if(valid.email(to))
-      sapply(to, email$addTo)
+    if(file.exists(body))
+      body <- readChar(body, file.info(body)$size)
+    
+    email$setHtmlMsg(as.character(body))
+    email$setTextMsg("Your email client does not support HTML messages")
   }
+  else
+    email$setMsg(as.character(body))
+  
+  if(.valid.email(to))
+    sapply(to, email$addTo)
   
   if("cc" %in% names(dots))
   {
-    if(valid.email(dots$cc))
+    if(.valid.email(dots$cc))
       sapply(dots$cc, email$addCc)
   }
   
   if("bcc" %in% names(dots))
   {
-    if(valid.email(dots$bcc))
+    if(.valid.email(dots$bcc))
       sapply(dots$bcc, email$addBcc)
   }
   
   if("replyTo" %in% names(dots))
   {
-    if(valid.email(dots$replyTo))
+    if(.valid.email(dots$replyTo))
       sapply(dots$replyTo, email$addReplyTo)
   }
   
@@ -158,9 +173,9 @@ send.mail <- function(from, to, subject = "", body = "", smtp = list(), authenti
 #' @param emails A character vector of email addresses.
 #' @return TRUE Boolean TRUE if all items in 'emails' are valid emails. If a malformed email address is identified, the function stops execution of the calling function 'send.mail' and prints the relevant item to console.
 # @examples
-# valid.email("<user@@email.com>") # TRUE
+# .valid.email("<user@@email.com>") # TRUE
 
-valid.email <- function(emails)
+.valid.email <- function(emails)
 {
   pattern <- "^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$"
   results <- regexpr(pattern, emails)

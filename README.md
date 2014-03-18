@@ -15,7 +15,7 @@ Sample use cases
 
 Installation instructions
 =========================
-You can install mailR using the devtools:
+You can install the latest development version of mailR using devtools:
 
 ```R
 install.packages("devtools", dep = T)
@@ -25,7 +25,7 @@ install_github("mailR", "rpremraj")
 lbrary(mailR)
 ```
 
-mailR can also available from [CRAN](http://cran.r-project.org/web/packages/mailR/):
+The latest release of mailR is available on [CRAN](http://cran.r-project.org/web/packages/mailR/):
 
 ```R
 install.packages("mailR", dep = T)
