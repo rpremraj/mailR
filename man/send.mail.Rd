@@ -2,8 +2,9 @@
 \alias{send.mail}
 \title{Send emails from R to multiple recipients with attachments and SMTP authorization}
 \usage{
-send.mail(from, to, subject = "", body = "", smtp = list(),
-  authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail(from, to, subject = "", body = "", html = FALSE,
+  inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE,
+  attach.files = NULL, ...)
 }
 \arguments{
   \item{from}{A valid email address of the sender.}
@@ -14,6 +15,14 @@ send.mail(from, to, subject = "", body = "", smtp = list(),
   \item{subject}{Subject of the email.}
 
   \item{body}{Body of the email as text.}
+
+  \item{html}{A boolean indicating whether the body of the
+  email should be parsed as HTML. If the parameter body
+  refers to an existing file location, the text of the file
+  is read in and parsed as HTML.}
+
+  \item{inline}{A boolean indicating whether images in the
+  HTML file should be embedded inline.}
 
   \item{smtp}{A list of configuration parameters to
   establish and authorize a connection with the SMTP
