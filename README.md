@@ -36,7 +36,7 @@ install.packages("devtools", dep = T)
 library(devtools)
 install_github("mailR", "rpremraj")
 
-lbrary(mailR)
+library(mailR)
 ```
 
 The latest release of mailR is available on [CRAN](http://cran.r-project.org/web/packages/mailR/):
@@ -117,7 +117,7 @@ send.mail(from = "sender@gmail.com",
           authenticate = TRUE,
           send = TRUE)
 ```
-
+*send.mail expects the images in the HTML file to be referenced relative to the current working directory (something to improve upon in the future).*
 
 MS Exchange server
 ==================
