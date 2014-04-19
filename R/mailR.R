@@ -40,6 +40,20 @@
   return(attachments)
 }
 
+#' Internal function to embed referenced images as inline 
+#'
+#' @param image.file.locations A vector of paths to images files in the file system to be embedded
+#' @return file.resolver A vector of Java objects of class org.apache.commons.mail.resolver.DataSourceFileResolver
+#' @details This is an internal function that performs the groundwork to embed images as inline. 
+.resolveInlineImages <- function(image.file.locations)
+{
+  base_dir <- .jnew("java.io.File", ".")
+  file.resolver <- .jnew("org.apache.commons.mail.resolver.DataSourceFileResolver", base_dir)
+  sapply(image.file.locations, file.resolver$resolve)
+  
+  return(file.resolver)
+}
+
 #' Internal function to establish authenticated connection with SMTP server
 #'
 #' @param smtp A list of parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
@@ -60,6 +74,8 @@
 #' @param to A character vector of recipient valid email addresses.
 #' @param subject Subject of the email.
 #' @param body Body of the email as text.
+#' @param html A boolean indicating whether the body of the email should be parsed as HTML. If the parameter body refers to an existing file location, the text of the file is read in and parsed as HTML.
+#' @param inline A boolean indicating whether images in the HTML file should be embedded inline.
 #' @param smtp A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
 #' @param send A boolean indicating whether the email should be sent at the end of the function (default behaviour). If set to false, function returns the email object to the parent environment.
@@ -71,6 +87,7 @@
 #' Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
 #' @export send.mail
 #' @import rJava
+#' @import stringr
 #' @note For more examples, see https://github.com/rpremraj/mailR 
 #' @examples
 #' sender <- "sender@@gmail.com"  # Replace with a valid address
@@ -83,7 +100,7 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
@@ -98,7 +115,9 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = li
   
   dots <- list(...)
   
-  if(html)
+  if(html && inline)
+    email <- .jnew("org.apache.commons.mail.ImageHtmlEmail")
+  else if(html)
     email <- .jnew("org.apache.commons.mail.HtmlEmail")
   else if(!is.null(attach.files))
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
@@ -110,7 +129,16 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = li
     attachments <- .createEmailAttachments(attach.files, dots)
     sapply(attachments, email$attach)
   }
-
+  
+  if(.jclass(email) == "org.apache.commons.mail.ImageHtmlEmail")
+  {
+    image.files.references <- str_extract_all(body, email$REGEX_IMG_SRC)
+    pattern <- "\"([^\"]*)\""
+    image.files.locations <- gsub("\"", "", sapply(str_extract_all(image.files.references[[1]], pattern), "[[", 1))
+    file.resolver <- .resolveInlineImages(image.files.locations)
+    email$setDataSourceResolver(file.resolver)  
+  }
+  
   email$setHostName(smtp$host.name)
   if("port" %in% names(smtp))
     email$setSmtpPort(as.integer(smtp$port));
@@ -163,12 +191,12 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = li
   }
   
   if(send)
-    email$send()
+    .jTryCatch(email$send())
   
   return(email)
 }
 
-#' Uses regex to validate email addresses
+#' Internal function to validate email addresses
 #'
 #' @param emails A character vector of email addresses.
 #' @return TRUE Boolean TRUE if all items in 'emails' are valid emails. If a malformed email address is identified, the function stops execution of the calling function 'send.mail' and prints the relevant item to console.
@@ -177,10 +205,25 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, smtp = li
 
 .valid.email <- function(emails)
 {
-  pattern <- "^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$"
-  results <- regexpr(pattern, emails)
-  if(any(results == -1))
-    stop(sprintf("Invalid email address(es) %s", paste(emails[which(results == -1)], collapse = ", ")))
-  
+  for(i in emails)
+  {
+    .jTryCatch(.jnew("javax.mail.internet.InternetAddress", i))
+  }
+  gc()
   return(TRUE)
+}
+
+#' Internal function to catch Java exceptions and print stack traces. Inspired by author of package XLConnect.
+#' @param ... A call to a Java method
+.jTryCatch <- function(...) {
+  tryCatch(..., Throwable = 
+             function(e) {
+               if(!is.jnull(e$jobj)) {
+                 
+                 print(e$jobj$printStackTrace())
+                 stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
+               } else 
+                 stop("Undefined error occurred!")
+             }
+  )
 }

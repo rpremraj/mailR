@@ -2,7 +2,24 @@ Overview
 ========
 mailR allows users to send emails from within R via an accessible SMTP server.
 
-It is developed as a wrapper around [Apache Commons Email](http://commons.apache.org/proper/commons-email/) and offers a majority of the project's functionality. In contrast to other similar R packages, namely [mail](http://cran.r-project.org/web/packages/mail/) and [sendmail](http://cran.r-project.org/web/packages/sendmailR/), mailR allows users to (i) use authentication-based SMTP servers, (ii) send emails to multiple recipients (including the use of Cc and Bcc), and (iii) attach multiple files from the file system to the email.
+It is developed as a wrapper around [Apache Commons Email](http://commons.apache.org/proper/commons-email/) and offers a majority of the project's functionality. mailR offers several additional features in contrast to other similar R packages, namely [mail](http://cran.r-project.org/web/packages/mail/) and [sendmail](http://cran.r-project.org/web/packages/sendmailR/)
+- mailR allows users to (i) use authentication-based SMTP servers
+- send emails to multiple recipients (including the use of Cc and Bcc)
+- attach multiple files from the file system to the email.
+- *NEW* allows sending HTML formatted emails with inline images.
+
+Updates (as of 20-04-2014)
+==========================
+
+New Features
+------------
+- mailR now allows sending email content as HTML including allowing for embedding images as inline (currently an experimental feature).
+- Email addresses conforming to RFC 2822 allowed, e.g., "FirstName LastName <sender@domain.com>" allowed.
+- A java stacktrace is printed out in case of failure when sending the email to allow better root cause analysis.
+
+Bug fixes
+---------
+- Fixed a bug that incorrectly set the TLS parameter as TRUE whenever the SSL parameter was set as TRUE.
 
 Sample use cases
 =================
@@ -39,7 +56,9 @@ To send an email via a SMTP server that does not require authentication:
 
 ```R
 send.mail(from = "sender@gmail.com",
-          to = c("recipient1@gmail.com", "recipient2@gmail.com"),
+          to = c("Recipient 1 <recipient1@gmail.com>", "recipient2@gmail.com"),
+          cc = c("CC Recipient <cc.recipient@gmail.com>"),
+          bcc = c("BCC Recipient <bcc.recipient@gmail.com>"),
           subject="Subject of the email",
           body = "Body of the email",
           smtp = list(host.name = "aspmx.l.google.com", port = 25),
@@ -74,6 +93,34 @@ send.mail(from = "sender@gmail.com",
           file.names = c("Download log", "Upload log"), # optional parameter
           file.descriptions = c("Description for download log", "Description for upload log"))
 ```
+
+To send a HTML formatted email:
+
+```R
+send.mail(from = "sender@gmail.com",
+          to = c("recipient1@gmail.com", "recipient2@gmail.com"),
+          subject = "Subject of the email",
+          body = "<html>The apache logo - <img src=\"http://www.apache.org/images/asf_logo_wide.gif\"></html>", # can also point to local file (see next example)
+          html = TRUE,
+          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),
+          authenticate = TRUE,
+          send = TRUE)
+```
+
+To send a HTML formatted email with embedded inline images:
+
+```R
+send.mail(from = "sender@gmail.com",
+          to = c("recipient1@gmail.com", "recipient2@gmail.com"),
+          subject = "Subject of the email",
+          body = "path.to.local.html.file",
+          html = TRUE,
+          inline = TRUE,
+          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),
+          authenticate = TRUE,
+          send = TRUE)
+```
+
 
 MS Exchange server
 ==================
