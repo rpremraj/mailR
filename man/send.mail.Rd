@@ -72,6 +72,11 @@ A description can be provided further as
 parameters must have the same length as 'attach.files'. In
 case attach.file is NULL, then these two parameters will be
 ignored.
+
+HTML formatted emails can be sent by setting the parameters
+html and inline (if embedding images) to TRUE. The body of
+the email can either be a HTML string or point to a HTML
+file in the local file system.
 }
 \note{
 For more examples, see https://github.com/rpremraj/mailR

@@ -2,22 +2,19 @@ Overview
 ========
 mailR allows users to send emails from within R via an accessible SMTP server.
 
-It is developed as a wrapper around [Apache Commons Email](http://commons.apache.org/proper/commons-email/) and offers a majority of the project's functionality. mailR offers several additional features in contrast to other similar R packages, namely [mail](http://cran.r-project.org/web/packages/mail/) and [sendmail](http://cran.r-project.org/web/packages/sendmailR/)
-- mailR allows users to (i) use authentication-based SMTP servers
+It is developed as a wrapper around [Apache Commons Email](http://commons.apache.org/proper/commons-email/) and offers a majority of the project's functionality. mailR offers several additional features in contrast to other similar R packages, namely [mail](http://cran.r-project.org/web/packages/mail/) and [sendmail](http://cran.r-project.org/web/packages/sendmailR/). It allows users to:
+- use authentication-based SMTP servers
 - send emails to multiple recipients (including the use of Cc and Bcc)
 - attach multiple files from the file system to the email.
-- *NEW* allows sending HTML formatted emails with inline images.
+- *[NEW]* send HTML formatted emails with inline images.
 
-Updates (as of 20-04-2014)
-==========================
-
-New Features
+New Features (as of 20-04-2014)
 ------------
 - mailR now allows sending email content as HTML including allowing for embedding images as inline (currently an experimental feature).
-- Email addresses conforming to RFC 2822 allowed, e.g., "FirstName LastName <sender@domain.com>" allowed.
+- Email addresses conforming to RFC 2822 allowed, e.g., "FirstName LastName \<sender@domain.com\>" allowed.
 - A java stacktrace is printed out in case of failure when sending the email to allow better root cause analysis.
 
-Bug fixes
+Bug fixes (as of 20-04-2014)
 ---------
 - Fixed a bug that incorrectly set the TLS parameter as TRUE whenever the SSL parameter was set as TRUE.
 

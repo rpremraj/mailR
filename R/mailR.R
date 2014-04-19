@@ -85,6 +85,8 @@
 #' @details The only mandatory value in the list 'smtp' is host.name that is the SMTP server address. A port number can also be provided via the list item 'port'. In case the SMTP server requires authorization, the parameter 'authenticate' must be set to TRUE and the list 'smtp' must include items 'user.name' and 'passwd'. If SSL or TLS encryption is required by the SMTP server, these can be indicated by setting a list item 'ssl' as TRUE or 'tls' as TRUE respectively.
 #' 
 #' Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
+#'
+#' HTML formatted emails can be sent by setting the parameters html and inline (if embedding images) to TRUE. The body of the email can either be a HTML string or point to a HTML file in the local file system.
 #' @export send.mail
 #' @import rJava
 #' @import stringr
