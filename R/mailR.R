@@ -142,20 +142,20 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, inline = 
   }
   
   email$setHostName(smtp$host.name)
+  
   if("port" %in% names(smtp))
     email$setSmtpPort(as.integer(smtp$port));
   
   if(authenticate == TRUE)
     email$setAuthenticator(.authenticateSMTP(smtp));
   
-  
   if("ssl" %in% names(smtp))
     if(smtp$ssl)
-      email$setSSLOnConnect(TRUE)
+      email$setSSL(TRUE)
   
   if("tls" %in% names(smtp))
     if(smtp$tls)
-      email$setStartTLSEnabled(TRUE)
+      email$setTLS(TRUE)
   
   email$setFrom(from)
   email$setSubject(subject)
