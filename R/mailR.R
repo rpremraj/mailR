@@ -68,13 +68,32 @@
   return(smtp.authentication)
 }
 
-#' Send emails from R to multiple recipients with attachments and SMTP authorization
+#' Internal function to set encoding of the email
+#'
+
+#' @param email Commons email object
+#' @param encoding Character encoding to use for the email. Supported encodings include iso-8859-1 (default), utf-8, us-ascii, and koi8-r. 
+#' @return email Commons email object with set encoding
+.resolveEncoding <- function(email, encoding)
+{
+  switch(encoding,
+         "iso-8859-1" = {email$setCharset("iso-8859-1")},
+         "utf-8" = {email$setCharset("utf-8")},
+         "us-ascii" = {email$setCharset("us-ascii")},
+         "koi8-r" = {email$setCharset("koi8-r")},
+         stop("Supported encodings include iso-8859-1, utf-8, us-ascii, and koi8-r only.")
+  )  
+  return(email)
+}
+
+#' Send emails from R
 #'
 #' @param from A valid email address of the sender.
 #' @param to A character vector of recipient valid email addresses.
 #' @param subject Subject of the email.
-#' @param body Body of the email as text.
-#' @param html A boolean indicating whether the body of the email should be parsed as HTML. If the parameter body refers to an existing file location, the text of the file is read in and parsed as HTML.
+#' @param body Body of the email as text. If the parameter body refers to an existing file location, the text of the file is parsed as body of the email.
+#' @param encoding Character encoding to use for the email. Supported encodings include iso-8859-1 (default), utf-8, us-ascii, and koi8-r.
+#' @param html A boolean indicating whether the body of the email should be parsed as HTML.
 #' @param inline A boolean indicating whether images in the HTML file should be embedded inline.
 #' @param smtp A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
@@ -102,16 +121,14 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
-  .valid.email(from)
-  
+ 
   if (!length(to) > 0) 
     stop("Argument 'to' must have at least one single (valid) email address.")
-  .valid.email(from)
-  
+    
   if(!all(c("host.name") %in% names(smtp)))
     stop("Check documentation to include all mandatory parameters to establisg SMTP connection.")
   
@@ -125,6 +142,8 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, inline = 
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
   else
     email <- .jnew("org.apache.commons.mail.SimpleEmail")
+  
+  email <- .resolveEncoding(email, encoding)
   
   if(!is.null(attach.files))
   {
@@ -160,17 +179,16 @@ send.mail <- function(from, to, subject = "", body = "", html = FALSE, inline = 
   email$setFrom(from)
   email$setSubject(subject)
   
+  if(file.exists(body))
+    body <- readChar(body, file.info(body)$size)
+    
   if(html)
   {
-    if(file.exists(body))
-      body <- readChar(body, file.info(body)$size)
-    
     email$setHtmlMsg(as.character(body))
     email$setTextMsg("Your email client does not support HTML messages")
-  }
-  else
-    email$setMsg(as.character(body))
-  
+  } else
+      email$setMsg(as.character(body))
+    
   if(.valid.email(to))
     sapply(to, email$addTo)
   
