@@ -6,16 +6,25 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 - use authentication-based SMTP servers
 - send emails to multiple recipients (including the use of Cc and Bcc)
 - attach multiple files from the file system to the email.
-- *[NEW]* send HTML formatted emails with inline images.
+- send HTML formatted emails with inline images.
 
-New Features (as of 20-04-2014)
-------------
+What's new
+----------
+
+**12th May 2014**
+
+*Features*
+- Added support to encode emails using iso-8859-1, utf-8, us-ascii, and koi8-r character sets.
+- The body parameter can point to a locally stored text (or HTML) file and mailR will parse its contents to create the body of the email.
+
+**20th April 2014**
+
+*Features*
 - mailR now allows sending email content as HTML including allowing for embedding images as inline (currently an experimental feature).
 - Email addresses conforming to RFC 2822 allowed, e.g., "FirstName LastName \<sender@domain.com\>" allowed.
 - A java stacktrace is printed out in case of failure when sending the email to allow better root cause analysis.
 
-Bug fixes (as of 20-04-2014)
----------
+*Bug fixes*
 - Fixed a bug that incorrectly set the TLS parameter as TRUE whenever the SSL parameter was set as TRUE.
 
 Sample use cases
