@@ -17,6 +17,9 @@ What's new
 - Added support to encode emails using iso-8859-1, utf-8, us-ascii, and koi8-r character sets.
 - The body parameter can point to a locally stored text (or HTML) file and mailR will parse its contents to create the body of the email.
 
+*Bug fixes*
+- Experimental: changed called methods to set SSL/TLS to true to check whether it resolves issue that causes port number to default to 465.
+
 **20th April 2014**
 
 *Features*
@@ -85,6 +88,20 @@ send.mail(from = "sender@gmail.com",
           send = TRUE)
 ```
 
+To send an email with utf-8 or other encoding:
+
+```R
+email <- send.mail(from = "Sender Name <sender@gmail.com>",
+                   to = "recipient@gmail.com",
+                   subject = "A quote from Gandhi",
+                   body = "In Hindi :  थोडा सा अभ्यास बहुत सारे उपदेशों से बेहतर है।
+                   English translation: An ounce of practice is worth more than tons of preaching.",
+                   encoding = "utf-8",
+                   smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = T),
+  			   authenticate = TRUE,
+				   send = TRUE)
+```           
+           
 To send an email with one or more file attachments:
 
 ```R
