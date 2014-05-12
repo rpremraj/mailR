@@ -1,10 +1,10 @@
 \name{send.mail}
 \alias{send.mail}
-\title{Send emails from R to multiple recipients with attachments and SMTP authorization}
+\title{Send emails from R}
 \usage{
-send.mail(from, to, subject = "", body = "", html = FALSE,
-  inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE,
-  attach.files = NULL, ...)
+send.mail(from, to, subject = "", body = "", encoding = "iso-8859-1",
+  html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE,
+  send = TRUE, attach.files = NULL, ...)
 }
 \arguments{
   \item{from}{A valid email address of the sender.}
@@ -14,12 +14,16 @@ send.mail(from, to, subject = "", body = "", html = FALSE,
 
   \item{subject}{Subject of the email.}
 
-  \item{body}{Body of the email as text.}
+  \item{body}{Body of the email as text. If the parameter
+  body refers to an existing file location, the text of the
+  file is parsed as body of the email.}
+
+  \item{encoding}{Character encoding to use for the email.
+  Supported encodings include iso-8859-1 (default), utf-8,
+  us-ascii, and koi8-r.}
 
   \item{html}{A boolean indicating whether the body of the
-  email should be parsed as HTML. If the parameter body
-  refers to an existing file location, the text of the file
-  is read in and parsed as HTML.}
+  email should be parsed as HTML.}
 
   \item{inline}{A boolean indicating whether images in the
   HTML file should be embedded inline.}
@@ -50,8 +54,7 @@ org.apache.commons.mail.SimpleEmail or
 org.apache.commons.mail.MultiPartEmail
 }
 \description{
-Send emails from R to multiple recipients with attachments
-and SMTP authorization
+Send emails from R
 }
 \details{
 The only mandatory value in the list 'smtp' is host.name
