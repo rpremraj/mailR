@@ -3,7 +3,7 @@ Type: Package
 Title: A utility to send emails from R
 Description: Interface to Apache Commons Email to send emails
     from within R.
-Version: 0.2.9
+Version: 0.3
 Date: 2014-05-12
 Author: Rahul Premraj
 Maintainer: Rahul Premraj <r.premraj+mailR@gmail.com>
