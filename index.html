@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mailr by rpremraj</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Mailr</h1>
+        <p>A utility to send emails from the R programming environment</p>
+
+        <p class="view"><a href="https://github.com/rpremraj/mailR">View the Project on GitHub <small>rpremraj/mailR</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/rpremraj/mailR/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/rpremraj/mailR/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/rpremraj/mailR">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h1>
+
+<p>mailR allows users to send emails from within R via an accessible SMTP server.</p>
+
+<p>It is developed as a wrapper around <a href="http://commons.apache.org/proper/commons-email/">Apache Commons Email</a> and offers a majority of the project's functionality. mailR offers several additional features in contrast to other similar R packages, namely <a href="http://cran.r-project.org/web/packages/mail/">mail</a> and <a href="http://cran.r-project.org/web/packages/sendmailR/">sendmail</a>. It allows users to:</p>
+
+<ul>
+<li>use authentication-based SMTP servers</li>
+<li>send emails to multiple recipients (including the use of Cc and Bcc)</li>
+<li>attach multiple files from the file system to the email.</li>
+<li>send HTML formatted emails with inline images.</li>
+</ul><h2>
+<a name="whats-new" class="anchor" href="#whats-new"><span class="octicon octicon-link"></span></a>What's new</h2>
+
+<p><strong>12th May 2014</strong></p>
+
+<p><em>Features</em></p>
+
+<ul>
+<li>Added support to encode emails using iso-8859-1, utf-8, us-ascii, and koi8-r character sets.</li>
+<li>The body parameter can point to a locally stored text (or HTML) file and mailR will parse its contents to create the body of the email.</li>
+</ul><p><em>Bug fixes</em></p>
+
+<ul>
+<li>Experimental: changed called methods to set SSL/TLS to true to check whether it resolves issue that causes port number to default to 465.</li>
+</ul><p><strong>20th April 2014</strong></p>
+
+<p><em>Features</em></p>
+
+<ul>
+<li>mailR now allows sending email content as HTML including allowing for embedding images as inline (currently an experimental feature).</li>
+<li>Email addresses conforming to RFC 2822 allowed, e.g., "FirstName LastName &lt;<a href="mailto:sender@domain.com">sender@domain.com</a>&gt;" allowed.</li>
+<li>A java stacktrace is printed out in case of failure when sending the email to allow better root cause analysis.</li>
+</ul><p><em>Bug fixes</em></p>
+
+<ul>
+<li>Fixed a bug that incorrectly set the TLS parameter as TRUE whenever the SSL parameter was set as TRUE.</li>
+</ul><h1>
+<a name="sample-use-cases" class="anchor" href="#sample-use-cases"><span class="octicon octicon-link"></span></a>Sample use cases</h1>
+
+<ol>
+<li><p>Create a workflow to generate business/status reports and have them delivered to you by email using <em>an authorized SMTP server</em> (a critical requirement when dealing with sensitive data).</p></li>
+<li><p>Periodically send updates on the status of long-running R processes. This is especially helpful when process running on remote machines encounter an error.</p></li>
+<li><p>Keep your entire team on the same page on the progress of the R process by being able to deliver mails to multiple recipients.</p></li>
+</ol><h1>
+<a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation instructions</h1>
+
+<p>You can install the latest development version of mailR using devtools:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">install.packages("devtools", dep = T)</span>
+<span class="c">library(devtools)</span>
+<span class="c">install_github("mailR", "rpremraj")</span>
+
+<span class="c">library(mailR)</span>
+</pre></div>
+
+<p>The latest release of mailR is available on <a href="http://cran.r-project.org/web/packages/mailR/">CRAN</a>:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">install.packages("mailR", dep = T)</span>
+
+<span class="c">library(mailR)</span>
+</pre></div>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>To send an email via a SMTP server that does not require authentication:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">send.mail(from = "sender@gmail.com",</span>
+<span class="c">          to = c("Recipient 1 &lt;recipient1@gmail.com&gt;", "recipient2@gmail.com"),</span>
+<span class="c">          cc = c("CC Recipient &lt;cc.recipient@gmail.com&gt;"),</span>
+<span class="c">          bcc = c("BCC Recipient &lt;bcc.recipient@gmail.com&gt;"),</span>
+<span class="c">          subject="Subject of the email",</span>
+<span class="c">          body = "Body of the email",</span>
+<span class="c">          smtp = list(host.name = "aspmx.l.google.com", port = 25),</span>
+<span class="c">          authenticate = FALSE,</span>
+<span class="c">          send = TRUE)</span>
+</pre></div>
+
+<p><em>Note that the SMTP server aspmx.l.google.com only works for gmail recipients. Do check your gmail spam folder in case you are testing using this SMTP server.</em></p>
+
+<p>To send an email via a SMTP server that requires authentication:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">send.mail(from = "sender@gmail.com",</span>
+<span class="c">          to = c("recipient1@gmail.com", "recipient2@gmail.com"),</span>
+<span class="c">          subject = "Subject of the email",</span>
+<span class="c">          body = "Body of the email",</span>
+<span class="c">          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),</span>
+<span class="c">          authenticate = TRUE,</span>
+<span class="c">          send = TRUE)</span>
+</pre></div>
+
+<p>To send an email with utf-8 or other encoding:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">email &lt;- send.mail(from = "Sender Name &lt;sender@gmail.com&gt;",</span>
+<span class="c">                   to = "recipient@gmail.com",</span>
+<span class="c">                   subject = "A quote from Gandhi",</span>
+<span class="c">                   body = "In Hindi :  थोडा सा अभ्यास बहुत सारे उपदेशों से बेहतर है।</span>
+<span class="c">                   English translation: An ounce of practice is worth more than tons of preaching.",</span>
+<span class="c">                   encoding = "utf-8",</span>
+<span class="c">                   smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = T),</span>
+<span class="c">               authenticate = TRUE,</span>
+<span class="c">                   send = TRUE)</span>
+</pre></div>
+
+<p>To send an email with one or more file attachments:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">send.mail(from = "sender@gmail.com",</span>
+<span class="c">          to = c("recipient1@gmail.com", "recipient2@gmail.com"),</span>
+<span class="c">          subject = "Subject of the email",</span>
+<span class="c">          body = "Body of the email",</span>
+<span class="c">          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),</span>
+<span class="c">          authenticate = TRUE,</span>
+<span class="c">          send = TRUE,</span>
+<span class="c">          attach.files = c("./download.log", "upload.log"),</span>
+<span class="c">          file.names = c("Download log", "Upload log"), # optional parameter</span>
+<span class="c">          file.descriptions = c("Description for download log", "Description for upload log"))</span>
+</pre></div>
+
+<p>To send a HTML formatted email:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">send.mail(from = "sender@gmail.com",</span>
+<span class="c">          to = c("recipient1@gmail.com", "recipient2@gmail.com"),</span>
+<span class="c">          subject = "Subject of the email",</span>
+<span class="c">          body = "&lt;html&gt;The apache logo - &lt;img src=\"http://www.apache.org/images/asf_logo_wide.gif\"&gt;&lt;/html&gt;", # can also point to local file (see next example)</span>
+<span class="c">          html = TRUE,</span>
+<span class="c">          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),</span>
+<span class="c">          authenticate = TRUE,</span>
+<span class="c">          send = TRUE)</span>
+</pre></div>
+
+<p>To send a HTML formatted email with embedded inline images:</p>
+
+<div class="highlight highlight-R"><pre><span class="c">send.mail(from = "sender@gmail.com",</span>
+<span class="c">          to = c("recipient1@gmail.com", "recipient2@gmail.com"),</span>
+<span class="c">          subject = "Subject of the email",</span>
+<span class="c">          body = "path.to.local.html.file",</span>
+<span class="c">          html = TRUE,</span>
+<span class="c">          inline = TRUE,</span>
+<span class="c">          smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "gmail_username", passwd = "password", ssl = TRUE),</span>
+<span class="c">          authenticate = TRUE,</span>
+<span class="c">          send = TRUE)</span>
+</pre></div>
+
+<p><em>send.mail expects the images in the HTML file to be referenced relative to the current working directory (something to improve upon in the future).</em></p>
+
+<h1>
+<a name="ms-exchange-server" class="anchor" href="#ms-exchange-server"><span class="octicon octicon-link"></span></a>MS Exchange server</h1>
+
+<p>I do not have access to an exchange server, so I cannot test mailR against it. Would be great to get a short note if you could successfully use mailR via MS Exchange. Thanks! </p>
+
+<h1>
+<a name="issuescontibutions" class="anchor" href="#issuescontibutions"><span class="octicon octicon-link"></span></a>Issues/Contibutions</h1>
+
+<p>Happy to hear about any issues you encounter using mailR. Simply file a ticket on github or feel free to <a href="mailto:%72%2E%70%72%65%6D%72%61%6A%2B%6D%61%69%6C%52%40%67%6D%61%69%6C%2E%63%6F%6D">email me</a>, or even send in a patch ;-)</p>
+
+<p>Also, would be great to have collaborators to further extend the functionality of mailR.</p>
+
+<p><a href="http://githalytics.com/rpremraj/mailR"><img src="https://cruel-carlota.pagodabox.com/1650fb9891b70b7440cc380824b513f0" alt="githalytics.com alpha" title="githalytics.com"></a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/rpremraj">rpremraj</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-5933229-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
