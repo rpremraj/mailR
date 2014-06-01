@@ -2,7 +2,7 @@ Package: mailR
 Type: Package
 Title: A utility to send emails from R
 Description: Interface to Apache Commons Email to send emails
-    from within R.
+    from R.
 Version: 0.3
 Date: 2014-05-12
 Author: Rahul Premraj
