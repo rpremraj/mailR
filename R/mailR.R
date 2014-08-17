@@ -32,7 +32,7 @@
   for(i in 1:length(attach.files))
   {
     attachments[[i]] <- .jnew("org.apache.commons.mail.EmailAttachment")
-    attachments[[i]]$setPath(attach.files[i])
+    attachments[[i]]$setPath(normalizePath(attach.files[i]))
     if(!is.null(file.names)) attachments[[i]]$setName(file.names[i])
     if(!is.null(file.descriptions)) attachments[[i]]$setDescription(file.descriptions[i])
   }
