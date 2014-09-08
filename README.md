@@ -10,6 +10,11 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 
 What's new
 ----------
+**08th September 2014**
+
+*Enhancement*
+- Better resolution of paths to allow attaching files from locations other than the working directory.
+- Updated documentation to give example of use on MS Exchange
 
 **12th May 2014**
 
@@ -147,8 +152,16 @@ send.mail(from = "sender@gmail.com",
 
 MS Exchange server
 ==================
-I do not have access to an exchange server, so I cannot test mailR against it. Would be great to get a short note if you could successfully use mailR via MS Exchange. Thanks! 
-
+Two mailR confirmed being able to use mailR via Exchange. While one user's environment didn't need authentication, the other user used the following code:
+```R
+send.mail(from = from,
+          to = to,
+          subject = subject,
+          body = msg, 
+          authenticate = TRUE,
+          smtp = list(host.name = "smtp.office365.com", port = 587,
+                      user.name = "xxx@domain.com", passwd = "xxx", tls = TRUE))
+```
 
 Issues/Contibutions
 ===================
