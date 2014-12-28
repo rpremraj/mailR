@@ -105,6 +105,7 @@
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
 #' @param send A boolean indicating whether the email should be sent at the end of the function (default behaviour). If set to false, function returns the email object to the parent environment.
 #' @param attach.files A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)
+#' @param debug A boolean indicating whether you wish to see detailed debug info
 #' @param ... Optional arguments to be passed related to file attachments. See details for more info. 
 #' @return email A Java object of class org.apache.commons.mail.SimpleEmail or org.apache.commons.mail.MultiPartEmail
 #' @details The only mandatory value in the list 'smtp' is host.name that is the SMTP server address. A port number can also be provided via the list item 'port'. In case the SMTP server requires authorization, the parameter 'authenticate' must be set to TRUE and the list 'smtp' must include items 'user.name' and 'passwd'. If SSL or TLS encryption is required by the SMTP server, these can be indicated by setting a list item 'ssl' as TRUE or 'tls' as TRUE respectively.
