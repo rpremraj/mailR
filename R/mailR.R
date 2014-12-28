@@ -121,7 +121,7 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, debug = FALSE, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
@@ -142,6 +142,9 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
   else
     email <- .jnew("org.apache.commons.mail.SimpleEmail")
+  
+  if(debug)
+    email$setDebug(TRUE)
   
   email <- .resolveEncoding(email, encoding)
   
@@ -243,7 +246,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
                  print(e$jobj$printStackTrace())
                  stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
                } else 
-                 stop("Undefined error occurred!")
+                 stop("Undefined error occurred! Turn debug mode on to see more details.")
              }
   )
 }
