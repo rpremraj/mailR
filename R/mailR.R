@@ -125,10 +125,10 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
- 
+  
   if (!length(to) > 0) 
     stop("Argument 'to' must have at least one single (valid) email address.")
-    
+  
   if(!all(c("host.name") %in% names(smtp)))
     stop("Check documentation to include all mandatory parameters to establisg SMTP connection.")
   
@@ -181,14 +181,14 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   
   if(file.exists(body))
     body <- readChar(body, file.info(body)$size)
-    
+  
   if(html)
   {
     email$setHtmlMsg(as.character(body))
     email$setTextMsg("Your email client does not support HTML messages")
   } else
-      email$setMsg(as.character(body))
-    
+    email$setMsg(as.character(body))
+  
   if(.valid.email(to))
     sapply(to, email$addTo)
   
