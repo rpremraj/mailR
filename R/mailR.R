@@ -1,14 +1,11 @@
 #' Internal function to create file attachment objects 
 #'
-#' @param attach.files A character vector of paths to files in the file system to be attached.
+#' @param attach.files A character vector of paths to files in the file system or valid URLs to be attached.
 #' @param dots A list generated from the ellipsis parameters in send.mail. See details for more info.
 #' @return attachments A vector of Java objects of class org.apache.commons.mail.EmailAttachment
 #' @details The relevant optional parameters include 'file.names' listing names to assign to the attached files and 'file.descriptions' that are descriptions to be assigned to the files. If included, both paramters should be of the same length as 
 .createEmailAttachments <- function(attach.files, dots = NULL)
 {
-  if(is.null(attach.files) | !all(sapply(c(attach.files), file.exists)))
-    stop("Argument 'attach.files' must link to valid files")
-  
   file.names <- NULL
   file.descriptions <- NULL
   
@@ -32,7 +29,16 @@
   for(i in 1:length(attach.files))
   {
     attachments[[i]] <- .jnew("org.apache.commons.mail.EmailAttachment")
-    attachments[[i]]$setPath(normalizePath(attach.files[i]))
+    if(isUrl(attach.files[i]))
+      attachments[[i]]$setURL(.jnew("java.net.URL", attach.files[i]))
+    else
+    {
+      if(file.exists(attach.files[i]))
+        attachments[[i]]$setPath(normalizePath(attach.files[i]))
+      else
+        stop("Argument 'attach.files' must link to valid files")
+    }
+
     if(!is.null(file.names)) attachments[[i]]$setName(file.names[i])
     if(!is.null(file.descriptions)) attachments[[i]]$setDescription(file.descriptions[i])
   }
@@ -98,17 +104,19 @@
 #' @param smtp A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
 #' @param send A boolean indicating whether the email should be sent at the end of the function (default behaviour). If set to false, function returns the email object to the parent environment.
-#' @param attach.files A character vector of paths in the file system linking to files to be attached to the email
+#' @param attach.files A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)
+#' @param debug A boolean indicating whether you wish to see detailed debug info
 #' @param ... Optional arguments to be passed related to file attachments. See details for more info. 
 #' @return email A Java object of class org.apache.commons.mail.SimpleEmail or org.apache.commons.mail.MultiPartEmail
 #' @details The only mandatory value in the list 'smtp' is host.name that is the SMTP server address. A port number can also be provided via the list item 'port'. In case the SMTP server requires authorization, the parameter 'authenticate' must be set to TRUE and the list 'smtp' must include items 'user.name' and 'passwd'. If SSL or TLS encryption is required by the SMTP server, these can be indicated by setting a list item 'ssl' as TRUE or 'tls' as TRUE respectively.
 #' 
-#' Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
+#' Using 'attach.files' you can attach files or webpages hosted on the web (for e.g. on Dropbox). Currently, URLs hostnames must be prepending with http:// or https://. Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
 #'
 #' HTML formatted emails can be sent by setting the parameters html and inline (if embedding images) to TRUE. The body of the email can either be a HTML string or point to a HTML file in the local file system.
 #' @export send.mail
 #' @import rJava
 #' @import stringr
+#' @import R.utils
 #' @note For more examples, see https://github.com/rpremraj/mailR 
 #' @examples
 #' sender <- "sender@@gmail.com"  # Replace with a valid address
@@ -121,14 +129,14 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, ...)
+send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, debug = FALSE, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
- 
+  
   if (!length(to) > 0) 
     stop("Argument 'to' must have at least one single (valid) email address.")
-    
+  
   if(!all(c("host.name") %in% names(smtp)))
     stop("Check documentation to include all mandatory parameters to establisg SMTP connection.")
   
@@ -142,6 +150,9 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     email <- .jnew("org.apache.commons.mail.MultiPartEmail")
   else
     email <- .jnew("org.apache.commons.mail.SimpleEmail")
+  
+  if(debug)
+    email$setDebug(TRUE)
   
   email <- .resolveEncoding(email, encoding)
   
@@ -181,14 +192,14 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   
   if(file.exists(body))
     body <- readChar(body, file.info(body)$size)
-    
+  
   if(html)
   {
     email$setHtmlMsg(as.character(body))
     email$setTextMsg("Your email client does not support HTML messages")
   } else
-      email$setMsg(as.character(body))
-    
+    email$setMsg(as.character(body))
+  
   if(.valid.email(to))
     sapply(to, email$addTo)
   
@@ -243,7 +254,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
                  print(e$jobj$printStackTrace())
                  stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
                } else 
-                 stop("Undefined error occurred!")
+                 stop("Undefined error occurred! Turn debug mode on to see more details.")
              }
   )
 }
