@@ -10,6 +10,7 @@ Maintainer: Rahul Premraj <r.premraj+mailR@gmail.com>
 License: GPL-3
 Imports:
     rJava,
-    stringr
+    stringr,
+    R.utils
 SystemRequirements: Java
 URL: https://github.com/rpremraj/mailR
