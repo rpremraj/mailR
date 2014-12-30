@@ -30,6 +30,8 @@ send.mail(from, to, subject = "", body = "", encoding = "iso-8859-1",
 
 \item{attach.files}{A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)}
 
+\item{debug}{A boolean indicating whether you wish to see detailed debug info}
+
 \item{...}{Optional arguments to be passed related to file attachments. See details for more info.}
 }
 \value{
