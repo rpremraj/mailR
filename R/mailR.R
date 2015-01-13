@@ -53,7 +53,7 @@
 #' @details This is an internal function that performs the groundwork to embed images as inline. 
 .resolveInlineImages <- function(image.file.locations)
 {
-  base_dir <- .jnew("java.io.File", ".")
+  base_dir <- .jnew("java.io.File", normalizePath(getwd()))
   file.resolver <- .jnew("org.apache.commons.mail.resolver.DataSourceFileResolver", base_dir)
   sapply(image.file.locations, file.resolver$resolve)
   
