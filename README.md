@@ -28,7 +28,7 @@ You can install the latest development version of mailR using devtools:
 ```R
 install.packages("devtools", dep = T)
 library(devtools)
-install_github("mailR", "rpremraj")
+install_github("rpremraj/mailR")
 
 library(mailR)
 ```
