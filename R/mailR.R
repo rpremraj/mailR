@@ -138,7 +138,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     stop("Argument 'to' must have at least one single (valid) email address.")
   
   if(!all(c("host.name") %in% names(smtp)))
-    stop("Check documentation to include all mandatory parameters to establisg SMTP connection.")
+    stop("Check documentation to include all mandatory parameters to establish SMTP connection.")
   
   dots <- list(...)
   
