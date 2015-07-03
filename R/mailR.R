@@ -188,7 +188,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     if(smtp$tls)
       email$setTLS(TRUE)
       
-  if(!missing(timeout)){
+  if(!missing(timeout) && is.numeric(timeout)){
     email$setSocketTimeout(as.integer(timeout))  
     email$setSocketConnectionTimeout(as.integer(timeout))
   }
