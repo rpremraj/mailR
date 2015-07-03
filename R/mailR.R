@@ -103,6 +103,7 @@
 #' @param inline A boolean indicating whether images in the HTML file should be embedded inline.
 #' @param smtp A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
+#' @param timeout An integer with the number of milliseconds for timeouts when connecting to the SMTP server.  Default is 60s (60000ms).
 #' @param send A boolean indicating whether the email should be sent at the end of the function (default behaviour). If set to false, function returns the email object to the parent environment.
 #' @param attach.files A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)
 #' @param debug A boolean indicating whether you wish to see detailed debug info
@@ -129,7 +130,7 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, debug = FALSE, ...)
+send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, timeout = 60000, send = TRUE, attach.files = NULL, debug = FALSE, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
@@ -187,11 +188,10 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     if(smtp$tls)
       email$setTLS(TRUE)
       
-  if("socketConnectionTimeout" %in% names(smtp))
-    email$setSocketConnectionTimeout(as.integer(smtp$socketConnectionTimeout));
-  
-  if("socketTimeout " %in% names(smtp))
-    email$setSocketTimeout(as.integer(smtp$socketTimeout));  
+  if(!missing(timeout)){
+    email$setSocketTimeout(as.integer(timeout))  
+    email$setSocketConnectionTimeout(as.integer(timeout))
+  }
   
   email$setFrom(from)
   email$setSubject(subject)
