@@ -103,12 +103,13 @@
 #' @param inline A boolean indicating whether images in the HTML file should be embedded inline.
 #' @param smtp A list of configuration parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @param authenticate A boolean variable to indicate whether authorization is required to connect to the SMTP server. If set to true, see details on parameters required in smtp parameter.
+#' @param timeout An integer with the number of milliseconds for timeouts when connecting to the SMTP server.  Default is 60s (60000ms).
 #' @param send A boolean indicating whether the email should be sent at the end of the function (default behaviour). If set to false, function returns the email object to the parent environment.
 #' @param attach.files A character vector of paths in the file system linking to files or *valid* URLs to be attached to the email (see details for more info on attaching URLs)
 #' @param debug A boolean indicating whether you wish to see detailed debug info
 #' @param ... Optional arguments to be passed related to file attachments. See details for more info. 
 #' @return email A Java object of class org.apache.commons.mail.SimpleEmail or org.apache.commons.mail.MultiPartEmail
-#' @details The only mandatory value in the list 'smtp' is host.name that is the SMTP server address. A port number can also be provided via the list item 'port'. In case the SMTP server requires authorization, the parameter 'authenticate' must be set to TRUE and the list 'smtp' must include items 'user.name' and 'passwd'. If SSL or TLS encryption is required by the SMTP server, these can be indicated by setting a list item 'ssl' as TRUE or 'tls' as TRUE respectively.
+#' @details The only mandatory value in the list 'smtp' is host.name that is the SMTP server address. A port number can also be provided via the list item 'port'. In case the SMTP server requires authorization, the parameter 'authenticate' must be set to TRUE and the list 'smtp' must include items 'user.name' and 'passwd'. If SSL or TLS encryption is required by the SMTP server, these can be indicated by setting a list item 'ssl' as TRUE or 'tls' as TRUE respectively.  'socketConnectionTimeout' and 'socketTimeout' allow overriding of the default 60000ms timeouts.   
 #' 
 #' Using 'attach.files' you can attach files or webpages hosted on the web (for e.g. on Dropbox). Currently, URLs hostnames must be prepending with http:// or https://. Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
 #'
@@ -129,7 +130,7 @@
 #'                    authenticate = FALSE,
 #'                    send = FALSE)
 #' \dontrun{email$send() # execute to send email}
-send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, send = TRUE, attach.files = NULL, debug = FALSE, ...)
+send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1", html = FALSE, inline = FALSE, smtp = list(), authenticate = FALSE, timeout = 60000, send = TRUE, attach.files = NULL, debug = FALSE, ...)
 {
   if (length(from) != 1) 
     stop("Argument 'from' must be a single (valid) email address.")
@@ -186,6 +187,11 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   if("tls" %in% names(smtp))
     if(smtp$tls)
       email$setTLS(TRUE)
+      
+  if(!missing(timeout) && is.numeric(timeout)){
+    email$setSocketTimeout(as.integer(timeout))  
+    email$setSocketConnectionTimeout(as.integer(timeout))
+  }
   
   email$setFrom(from)
   email$setSubject(subject)
