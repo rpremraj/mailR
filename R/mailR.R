@@ -255,6 +255,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
                  stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
                } else 
                  stop("Undefined error occurred! Turn debug mode on to see more details.")
-             }
+             },
+             error = function(e) message(e)
   )
 }
