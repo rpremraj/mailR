@@ -8,8 +8,8 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 - attaching multiple files from the file system or from URLs
 - sending HTML formatted emails with inline images
 
-What's new in verion 0.4
-------------------------
+What's new in version 0.4
+-------------------------
 **30th December 2014**
 
 *Features*
