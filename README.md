@@ -8,18 +8,13 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 - attaching multiple files from the file system or from URLs
 - sending HTML formatted emails with inline images
 
-What's new in version 0.4
+What's new in version 0.5
 -------------------------
-**30th December 2014**
+**6th December 2016**
 
-*Features*
-- Attach files to the email using URLs, e.g., you can send files from your Dropbox public folder using the URL.
-- A 'debug' parameter to set that will make send.mail() provide a detailed log.
-- Option to set a email address to reply to using the 'replyTo' parameter.
-
-*Enhancement*
-- Upgraded Commons Email Jar to version 1.3.3
-- Upgraded Javax.mail Jar to version 1.5.2
+*Enhancements*
+- Better handling of errors thrown by Java (thanks to @chlorenz)
+- Email clients unable to view HTML emails now receive stripped down version of message (Fixes #24)
 
 Installation instructions
 =========================
@@ -172,6 +167,17 @@ Happy to hear about issues you encounter using mailR via Github's [issue tracker
 
 Change log
 ===================
+**30th December 2014**
+
+*Features*
+- Attach files to the email using URLs, e.g., you can send files from your Dropbox public folder using the URL.
+- A 'debug' parameter to set that will make send.mail() provide a detailed log.
+- Option to set a email address to reply to using the 'replyTo' parameter.
+
+*Enhancement*
+- Upgraded Commons Email Jar to version 1.3.3
+- Upgraded Javax.mail Jar to version 1.5.2
+
 **08th September 2014**
 
 *Enhancement*
