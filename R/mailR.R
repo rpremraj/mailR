@@ -74,6 +74,15 @@
   return(smtp.authentication)
 }
 
+#' Internal function to strip HTML tags from a string
+#'
+#' @param string String to strip HTML tags from.
+#' @return string
+.stripHTML <- function(htmlString) {
+  return(gsub("<.*?>", "", htmlString))
+}
+
+
 #' Internal function to set encoding of the email
 #'
 
@@ -118,7 +127,6 @@
 #' @import rJava
 #' @import stringr
 #' @import R.utils
-#' @import XML
 #' @note For more examples, see https://github.com/rpremraj/mailR
 #' @examples
 #' sender <- "sender@@gmail.com"  # Replace with a valid address
@@ -205,7 +213,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
     email$setHtmlMsg(as.character(body))
     email$setTextMsg(htmlToText(body))
   } else
-    email$setMsg(as.character(body))
+    email$setMsg(paste("The contents of the original email have been modified because your email client does not support viewing HTML emails.", .stripHTML(body), sep = "\n\n"))
 
   if(.valid.email(to))
     sapply(to, email$addTo)
@@ -262,6 +270,7 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
                  stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
                } else
                  stop("Undefined error occurred! Turn debug mode on to see more details.")
-             }
+             },
+             error = function(e) message(e)
   )
 }
