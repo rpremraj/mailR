@@ -1,3 +1,6 @@
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/infuser)](http://cran.r-project.org/web/packages/mailR)
+[![Downloads](http://cranlogs.r-pkg.org/badges/infuser)](http://cran.rstudio.com/package=mailR)
+
 Overview
 ========
 mailR allows users to send emails from R.
