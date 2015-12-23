@@ -211,9 +211,9 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   if(html)
   {
     email$setHtmlMsg(as.character(body))
-    email$setTextMsg("Your email client does not support HTML messages")
+    email$setTextMsg(.stripHTML(body))
   } else
-    email$setMsg(paste("The contents of the original email have been modified because your email client does not support viewing HTML emails.", .stripHTML(body), sep = "\n\n"))
+    email$setMsg(body)
 
   if(.valid.email(to))
     sapply(to, email$addTo)
