@@ -236,6 +236,12 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
       sapply(dots$replyTo, email$addReplyTo)
   }
 
+  if ("headers" %in% names(dots))
+  {
+    lapply(names(dots$headers), function(x)
+      email$addHeader(x, dots$headers[[x]]))
+  }
+
   if(send)
     .jTryCatch(email$send())
 
