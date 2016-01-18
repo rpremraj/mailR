@@ -123,6 +123,8 @@
 #' Using 'attach.files' you can attach files or webpages hosted on the web (for e.g. on Dropbox). Currently, URLs hostnames must be prepending with http:// or https://. Two optional paramters relevant to attachments can be supplied. Parameter 'file.names' can be provided to assign names to the files listed in the parameter 'attach.files'. A description can be provided further as 'file.descriptions' to further describe the file. Both parameters must have the same length as 'attach.files'. In case attach.file is NULL, then these two parameters will be ignored.
 #'
 #' HTML formatted emails can be sent by setting the parameters html and inline (if embedding images) to TRUE. The body of the email can either be a HTML string or point to a HTML file in the local file system.
+#'
+#' Email headers can be set by passing a named list called headers, e.g., 'headers = list("X-Department"="Finance","X-Source"="Automated report")'.
 #' @export send.mail
 #' @import rJava
 #' @import stringr
@@ -271,7 +273,6 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   tryCatch(..., Throwable =
              function(e) {
                if(!is.jnull(e$jobj)) {
-
                  print(e$jobj$printStackTrace())
                  stop(paste(class(e)[1], e$jobj$getMessage(), sep = " (Java): "), call. = FALSE)
                } else

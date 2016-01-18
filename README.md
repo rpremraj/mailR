@@ -11,13 +11,13 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 - attaching multiple files from the file system or from URLs
 - sending HTML formatted emails with inline images
 
-What's new in version 0.5
+What's new in version 0.6
 -------------------------
-**6th December 2016**
+**18th January 2016**
 
 *Enhancements*
-- Better handling of errors thrown by Java (thanks to @chlorenz)
-- Email clients unable to view HTML emails now receive stripped down version of message (Fixes #24)
+- Refinement to the stripped down text version of HTML emails for incompatible clients (thanks to @dtenenba)
+- Ability to add email headers by passing a named list `headers` (thanks to @dtenenba)
 
 Installation instructions
 =========================
@@ -128,9 +128,28 @@ send.mail(from = "sender@gmail.com",
 ```
 *send.mail expects the images in the HTML file to be referenced relative to the current working directory (something to improve upon in the future).*
 
+You can add headers to your emails by passing a named list called `headers`. Some mail clients allow defining rules based on email headers, where such a feature can come in handy.
+
+```R
+send.mail(from = "sender@gmail.com",
+          to = c("Recipient 1 <recipient1@gmail.com>", "recipient2@gmail.com"),
+          subject = "Subject of the email",
+          body = "Body of the email",
+          smtp = list(host.name = "aspmx.l.google.com", port = 25),
+          headers = list("X-Department" = "Finance", "X-Source" = "Automated report"),
+          authenticate = FALSE,
+          send = TRUE)
+```
+
+This will result in additional headers added to your email as below:
+```
+X-Department: Finance
+X-Source: Automated report
+```
+
 MS Exchange server
 ==================
-Two mailR users confirmed being able to send emails via Exchange using the following code:
+Provided you have the correct SMTP settings, mailR plays well with MS Exchange. Two mailR users confirmed being able to send emails via Exchange using the following code. I also successfully use mailR at work connecting to MS Exchange.
 ```R
 send.mail(from = from,
           to = to,
@@ -164,12 +183,28 @@ send.mail(from = "sender@gmail.com",
           send = TRUE)
 ```
 
+mailR equivalent of "Blue Screen of Death"
+==========================================
+Many folks have run into this error using mailR: `Error in ls(envir = envir, all.names = private)`.
+
+The source of the problem most likely lies in the connection to the SMTP server. This could either be due to incorrect settings (someone confirmed trying several servers at work until finally discovering the one playing well with mailR) or be a proxy issue. Turn on the `debug` parameter to get more pointers to resolving your problem.
+
+While I will do my best to support you, there is little I can do remotely if you fall into this trap.
+
 Issues/Contibutions
 ===================
 Happy to hear about issues you encounter using mailR via Github's [issue tracker](https://github.com/rpremraj/mailR/issues/new).
 
+If you would like to submit a patch to improve mailR, please send a pull request to the *develop branch*.
+
 Change log
 ===================
+**6th December 2015**
+
+*Enhancements*
+- Better handling of errors thrown by Java (thanks to @chlorenz)
+- Email clients unable to view HTML emails now receive stripped down version of message (Fixes #24)
+
 **30th December 2014**
 
 *Features*
