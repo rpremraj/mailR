@@ -177,8 +177,8 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
   if(.jclass(email) == "org.apache.commons.mail.ImageHtmlEmail")
   {
     image.files.references <- str_extract_all(body, email$REGEX_IMG_SRC)
-    pattern <- "\"([^\"]*)\""
-    image.files.locations <- gsub("\"", "", sapply(str_extract_all(image.files.references[[1]], pattern), "[[", 1))
+    pattern <- "[Ss][Rr][Cc]\\s*=\\s*\"([^\"]*)\""
+    image.files.locations <- gsub("\"", "", sapply(str_match_all(image.files.references[[1]], pattern), "[[", 2))
     file.resolver <- .resolveInlineImages(image.files.locations)
     email$setDataSourceResolver(file.resolver)
   }
