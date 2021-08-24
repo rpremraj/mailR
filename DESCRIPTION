@@ -14,3 +14,5 @@ Imports:
     R.utils
 SystemRequirements: Java
 URL: https://github.com/rpremraj/mailR
+RoxygenNote: 7.1.1
+Encoding: UTF-8

@@ -1,5 +1,7 @@
 #' Internal function to create file attachment objects
 #'
+#' @keywords internal
+#' @noRd
 #' @param attach.files A character vector of paths to files in the file system or valid URLs to be attached.
 #' @param dots A list generated from the ellipsis parameters in send.mail. See details for more info.
 #' @return attachments A vector of Java objects of class org.apache.commons.mail.EmailAttachment
@@ -48,6 +50,8 @@
 
 #' Internal function to embed referenced images as inline
 #'
+#' @keywords internal
+#' @noRd
 #' @param image.file.locations A vector of paths to images files in the file system to be embedded
 #' @return file.resolver A vector of Java objects of class org.apache.commons.mail.resolver.DataSourceFileResolver
 #' @details This is an internal function that performs the groundwork to embed images as inline.
@@ -62,6 +66,8 @@
 
 #' Internal function to establish authenticated connection with SMTP server
 #'
+#' @keywords internal
+#' @noRd
 #' @param smtp A list of parameters to establish and authorize a connection with the SMTP server. See details for the various parameters.
 #' @return smtp.authentication A Java object of class 'org.apache.commons.mail.DefaultAuthenticator'
 .authenticateSMTP <- function(smtp)
@@ -76,6 +82,8 @@
 
 #' Internal function to strip HTML tags from a string
 #'
+#' @keywords internal
+#' @noRd
 #' @param string String to strip HTML tags from.
 #' @return string
 .stripHTML <- function(htmlString) {
@@ -85,7 +93,8 @@
 
 #' Internal function to set encoding of the email
 #'
-
+#' @keywords internal
+#' @noRd
 #' @param email Commons email object
 #' @param encoding Character encoding to use for the email. Supported encodings include iso-8859-1 (default), utf-8, us-ascii, and koi8-r.
 #' @return email Commons email object with set encoding
@@ -252,6 +261,8 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
 
 #' Internal function to validate email addresses
 #'
+#' @keywords internal
+#' @noRd
 #' @param emails A character vector of email addresses.
 #' @return TRUE Boolean TRUE if all items in 'emails' are valid emails. If a malformed email address is identified, the function stops execution of the calling function 'send.mail' and prints the relevant item to console.
 # @examples
@@ -268,6 +279,8 @@ send.mail <- function(from, to, subject = "", body = "", encoding = "iso-8859-1"
 }
 
 #' Internal function to catch Java exceptions and print stack traces. Inspired by author of package XLConnect.
+#' @keywords internal
+#' @noRd
 #' @param ... A call to a Java method
 .jTryCatch <- function(...) {
   tryCatch(..., Throwable =
