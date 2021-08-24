@@ -11,6 +11,15 @@ It is developed as a wrapper around [Apache Commons Email](http://commons.apache
 - attaching multiple files from the file system or from URLs
 - sending HTML formatted emails with inline images
 
+What's new in version 0.7
+-------------------------
+**24th August 2021**
+
+*Updates*
+- Upgraded Commons Email Jar to version 1.5
+- Upgraded Javax.mail Jar to version 1.6.2
+
+
 What's new in version 0.6
 -------------------------
 **18th January 2016**
